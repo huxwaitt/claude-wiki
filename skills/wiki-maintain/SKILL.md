@@ -1,6 +1,6 @@
 ---
 name: wiki-maintain
-description: Change a retrieval wiki built to this contract (a `_index.md` router plus a `_schema.md` page contract), such as the Advisory-Wiki, without breaking its structure — edit a page, add a page/pitfall/domain, rename or retire a page, add glossary terms, set up an empty wiki, or re-validate. Use when the user says "/wiki-maintain", "update the wiki", "add a page/domain/pitfall to the wiki", "change what the wiki says about…", "the wiki is wrong about…", "add a term to the glossary", "set up the wiki", or "re-validate the wiki". Read-only lookups belong to /wiki-navigate.
+description: Change a retrieval wiki built to this contract (a `_index.md` router plus a `_schema.md` page contract), without breaking its structure — edit a page, add a page/pitfall/domain, rename or retire a page, add glossary terms, set up an empty wiki, or re-validate. Use when the user says "/wiki-maintain", "update the wiki", "add a page/domain/pitfall to the wiki", "change what the wiki says about…", "the wiki is wrong about…", "add a term to the glossary", "set up the wiki", or "re-validate the wiki". Read-only lookups belong to /wiki-navigate.
 version: 2.0.0
 ---
 
@@ -38,7 +38,7 @@ rename/deprecate). Only *bulk import* fans out to sub-agents; everything else is
 
 If the request needs new facts, locate the exact source and heading now, in the form `_sources.md`
 defines. If no source covers it, the change is user-supplied knowledge — say so, and record it as
-`Maintainer/<date>`. If it needs a source not yet in `_sources.md`, that file and the `$courses` list in
+`Maintainer/<date>`. If it needs a source not yet in `_sources.md`, that file and the `$sources` list in
 `validate.ps1` are part of the change set.
 
 Setting up an empty wiki is its own path: follow `_bootstrap.md` in its stated order, and treat each of
@@ -49,7 +49,7 @@ Fill the change plan in `_maintenance.md` §6 — paths to create/modify/rename,
 deltas, domain index rows and decisions-in-order line, playbook line, glossary rows in stored form
 (`| term | ≤25-word definition | \`see-id\` |`), overview/root count or structure text, schema/validator
 changes (flag), sources per claim (flag `Maintainer/<date>`), any new source added to `_sources.md` and
-`$courses`, catalog regen, draft changelog line. Present it and stop. Proceed only on explicit approval
+`$sources`, catalog regen, draft changelog line. Present it and stop. Proceed only on explicit approval
 given after seeing the plan. For any edit small enough that a plan feels excessive, show the exact
 before/after text instead — but still stop and wait. A scope change during execution → re-confirm the
 delta before continuing.

@@ -1,6 +1,6 @@
 ---
 name: wiki-navigate
-description: Read-only navigation of a retrieval wiki built to this contract (a `_index.md` router plus a `_schema.md` page contract), such as the Advisory-Wiki. Use when the user says "/wiki-navigate", "consult the wiki", "consult the advisory wiki", "what does the wiki say about…", "where do I start with…", or asks how to do something the wiki covers. Also use when another skill needs a wiki lookup. For edits use /wiki-maintain.
+description: Read-only navigation of a retrieval wiki built to this contract (a `_index.md` router plus a `_schema.md` page contract). Use when the user says "/wiki-navigate", "consult the wiki", "what does the wiki say about…", "where do I start with…", or asks how to do something the wiki covers. Also use when another skill needs a wiki lookup. For edits use /wiki-maintain.
 version: 2.0.0
 ---
 

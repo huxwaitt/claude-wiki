@@ -6,7 +6,7 @@ $types = 'concept','decision','pattern','pitfall','checklist','procedure'
 # Fill each one together with its counterpart in _schema.md §5/§6 and _sources.md; `_bootstrap.md`
 # explains how to derive them. While a list is empty its check is SKIPPED and reported at the end, so an
 # unpopulated wiki validates cleanly instead of failing every page on a vocabulary that does not exist yet.
-$courses = @()        # accepted source names (_sources.md). A source is "<name> § <exact heading>".
+$sources = @()        # accepted source names (_sources.md). A source is "<name> § <exact heading>".
 $stages  = @()        # _schema.md §5
 $topics  = @()        # _schema.md §5
 $depthPattern = ''    # _schema.md §5, e.g. '^L[123](-L[123])?$'
@@ -89,11 +89,11 @@ foreach ($pf in $pageFiles) { $f = $pf.File
   if ($depthPattern -and $fm.depth -notmatch $depthPattern) { $issues += "depth '$($fm.depth)'" }
   $aw = @($fm.applies_when).Count; if ($aw -lt 2 -or $aw -gt 5) { $issues += "applies_when count $aw" }
   if (@($fm.not_for).Count -gt 3) { $issues += 'not_for >3' }
-  # Source form (_schema.md §3): "<source name> § <exact heading>", name from $courses; or "Maintainer/<date> § …".
+  # Source form (_schema.md §3): "<source name> § <exact heading>", name from $sources; or "Maintainer/<date> § …".
   foreach ($s in @($fm.sources)) {
     if ($s -match '^Maintainer/\d{4}-\d{2}-\d{2} § .+') { continue }
     if ($s -notmatch '^(.+?) § (.+)$') { $issues += "source form: $s"; continue }
-    if ($courses.Count -and $courses -notcontains $Matches[1]) { $issues += "unknown source: $($Matches[1])" }
+    if ($sources.Count -and $sources -notcontains $Matches[1]) { $issues += "unknown source: $($Matches[1])" }
   }
   # body
   if ($body -notmatch '(?m)^# ') { $issues += 'no H1' }
@@ -221,8 +221,9 @@ foreach ($l in (Get-Content "$root\_glossary.md")) {
   if ($cells[0] -eq 'Alias' -or $cells[0] -match '^-+$') { continue }
   if ($gTerms -notcontains $cells[1]) { $struct += "_glossary.md: alias '$($cells[0])' → '$($cells[1])' is not a Term" }
 }
-# sources: the course is checked against $courses per page above. Headings cite the course as delivered on
-# Skilljar (see _sources.md); there is no local transcript to resolve them against, so no file check here.
+# sources: the source name is checked against $sources per page above. Whether a source is reachable as a
+# local file is subject-specific, so nothing is resolved against the filesystem here; that name check is
+# the guard.
 # A "Maintainer/<date>" source must still be backed by a changelog entry of that date.
 foreach ($p in ($pages | Where-Object fm)) {
   foreach ($s in @($p.fm.sources)) {
@@ -273,7 +274,7 @@ if ($true) {
 $struct | ForEach-Object { "     $_" }
 # Unfilled subject vocabularies (see _bootstrap.md). Not issues — checks that are not running yet.
 $todo = @()
-if (-not $courses.Count) { $todo += '$courses (accepted source names; mirror _sources.md)' }
+if (-not $sources.Count) { $todo += '$sources (accepted source names; mirror _sources.md)' }
 if (-not $stages.Count)  { $todo += '$stages (_schema.md §5)' }
 if (-not $topics.Count)  { $todo += '$topics (_schema.md §5)' }
 if (-not $depthPattern)  { $todo += '$depthPattern (_schema.md §5)' }

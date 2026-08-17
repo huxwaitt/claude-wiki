@@ -13,10 +13,10 @@ How to change this wiki without breaking it. Structural only: it names file role
 | `_schema.md` | The page contract (§2 voice · §3 frontmatter · §4 templates · §5 vocabularies · §6 canonical names · §7 domain index · §8 exclusions · §9 generated files). Change only when the contract changes. | authored |
 | `_catalog.yaml` | All frontmatter, one file. Grep target. | **generated** by `_tools\validate.ps1 -WriteCatalog` |
 | `_maintenance.md` | This file + `## Changelog`. | authored |
-| `_tools\validate.ps1` | Enforces `_schema.md` per page, wiki structure, source form, count drift, catalog freshness. Vocabulary lists at its top mirror §5; `$courses` mirrors `_sources.md`. Resolves its own root from the script location, or `-Root`. | authored |
+| `_tools\validate.ps1` | Enforces `_schema.md` per page, wiki structure, source form, count drift, catalog freshness. Vocabulary lists at its top mirror §5; `$sources` mirrors `_sources.md`. Resolves its own root from the script location, or `-Root`. | authored |
 | `NN-slug\` | Domain folder. `NN` two digits, unique, ordered; `slug` lowercase-hyphenated. Contains `_index.md` (§7 format) + pages. Flat within a domain. **One container level is allowed for a reference series**: a `NN-slug\` folder that holds only leaf folders (`slug\`, unnumbered) and its own 4-row router `_index.md`. Leaf pages carry `domain: NN-container/leaf` and ids `leaf.<page>`. No nesting below a leaf. | authored |
 | `NN-slug\<page>.md` · `pitfall-<page>.md` | One atomic page. `id: <slug>.<filename-without-.md>` — id and filename are the same fact. | authored |
-| `_sources.md` | The source catalogue: every source this wiki may cite, how to reach it, and the citation form. Accepted names: the `$courses` list in `validate.ps1`, which must be kept in step with this file. | authored |
+| `_sources.md` | The source catalogue: every source this wiki may cite, how to reach it, and the citation form. Accepted names: the `$sources` list in `validate.ps1`, which must be kept in step with this file. | authored |
 | `_bootstrap.md` | How to stand an empty wiki up: domains, vocabularies, source form, the gate. Present only until the wiki is populated, then deleted. | authored |
 
 Invariants: frontmatter is the routing surface (routing decisions are made from `summary` / `applies_when` / `not_for` / `topics` / `depth` alone) · id = filename · every id reference resolves · every sentence traces to a listed source · domain `_index.md` Pages/Pitfalls tables mirror frontmatter (frontmatter wins) · counts stated in top-level files equal live counts · `_catalog.yaml` equals a fresh regeneration.
@@ -26,8 +26,8 @@ Invariants: frontmatter is the routing surface (routing decisions are made from 
 - Answer first: H1 → `**Bottom line:**` (≤2 sentences) → template headings for the type, in order, none added.
 - `summary` (≤40 words) states the answer — reading only it, a counselor can give a first-pass reply. Never "This page covers…".
 - `applies_when` (2–5) are things a user would actually say; `not_for` (0–3) is `<misrouted intent> → <other page id>`.
-- `topics` (1–4) from §5 only; `stage` (1–2) from §5; `depth` by source track (L1 Associate · L2 Developer · L3 Architect, ranges allowed).
-- `sources` = `<Course name> § <exact screen heading>`, the course from `_sources.md`; a cert-track module is `<Prep course> / <Module> § <heading>`. Body `## Sources` repeats the list verbatim; a lesson merged from several course variants cites every variant's heading.
+- `topics` (1–4) from §5 only; `stage` (1–2) from §5; `depth` from §5, set by the audience the source serves (ranges allowed).
+- `sources` = the form defined in `_sources.md`, naming a source listed there and an exact heading inside it. Body `## Sources` repeats the list verbatim; a page merged from several sources cites every one.
 - Conditional guidance as `If <observable condition> → <action>. Because <reason>.`; imperative, builder-facing; ≤25 words per bullet.
 - Canonical names from §6; source's own term in **bold** on first use; cross-reference only as `` `id` ``.
 - Nothing invented: omit what no source says. No pedagogy (exercises, quizzes, "you will learn", navigation).
@@ -42,11 +42,11 @@ Invariants: frontmatter is the routing surface (routing decisions are made from 
 | **Add pitfall** | `pitfall-<slug>.md` · domain `_index.md` Pitfalls row · `## Pitfalls` bullet on the preventing decision/pattern page · counts · catalog regen | glossary if the story names a term |
 | **Split / merge pages** | new page(s) as *Add page*; retired id(s) as *Rename/deprecate* | playbook and index rows reflect the new set exactly once |
 | **Rename / deprecate page** | rename file + `id` · grep whole wiki for the old id and rewrite every hit (frontmatter `related`/`not_for`, bodies, domain `_index.md`, `_playbook.md`, `_glossary.md` See, `_overview.md`) · changelog line `renamed a → b` or `removed a (reason)` · counts · catalog regen | no stub file is left behind (§5) |
-| **Add domain folder** | `NN-slug\` + `_index.md` per §7 · row in `_index.md` domain table (Route here when / Not here) · `### NN <Title>` section in `_overview.md` · `_playbook.md` placement · `_schema.md` §5 domain list (flag: contract change) · counts · catalog regen | at least one page and a stage checklist before publishing. A new **component leaf** goes under `10-claude-components\` (row in the container `_index.md` and in the root components table; counted line in the `### 10` overview section; no playbook placement; ≥10 pages; no stage checklist required) |
+| **Add domain folder** | `NN-slug\` + `_index.md` per §7 · row in `_index.md` domain table (Route here when / Not here) · `### NN <Title>` section in `_overview.md` · `_playbook.md` placement · `_schema.md` §5 domain list (flag: contract change) · counts · catalog regen | at least one page and a stage checklist before publishing. A new **leaf of a reference series** goes under that series' container folder (row in the container `_index.md` and in the root reference table; counted line in the container's `_overview.md` section; no playbook placement; enough pages to justify a leaf; no stage checklist required) |
 | **Add / modify glossary term** | `_glossary.md` row (§4 rule) | alias rows for synonyms; §6 if it is a canonical product name |
 | **Change a top-level file** | the file · anything that quotes it (`_index.md` file table, `_overview.md` organisation text) | if `_schema.md` §4/§5 changes → mirror the list/template in `validate.ps1`; **flag loudly**: contract change |
 | **Re-validate only** | nothing · run `_tools\validate.ps1 -WriteCatalog` · report | changelog line only if the catalog changed |
-| **Bulk import** (a new source track, or many pages at once) | build plan first: source-section → domain/page-id map, planned ids, pitfall assignments (the initial-build pattern) · confirm the plan · fan out **one agent per affected domain**, each given `_schema.md` + the plan + this file's touch-lists · then one *Add page*/*Add domain* touch-list pass over the whole result · counts · catalog regen | new course name → `_sources.md` row + `validate.ps1` `$courses` (mirror; flag) · new canonical names → `_schema.md` §6 · glossary sweep for new terms · run the checklist once at the end, not per agent |
+| **Bulk import** (a new body of source material, or many pages at once) | build plan first: source-section → domain/page-id map, planned ids, pitfall assignments (the initial-build pattern) · confirm the plan · fan out **one agent per affected domain**, each given `_schema.md` + the plan + this file's touch-lists · then one *Add page*/*Add domain* touch-list pass over the whole result · counts · catalog regen | new source name → `_sources.md` row + `validate.ps1` `$sources` (mirror; flag) · new canonical names → `_schema.md` §6 · glossary sweep for new terms · run the checklist once at the end, not per agent |
 
 ## 4. Glossary rule
 
@@ -54,8 +54,8 @@ Any technical term a change introduces or renames goes into `_glossary.md` in th
 
 ## 5. Sources, provenance and deprecation
 
-- Default: every sentence traces to `<Course name> § <heading>`. Merging across courses is fine; adding is not. A new claim needs a course already listed in `_sources.md`, or that file and `validate.ps1`'s `$courses` list are extended in the same change.
-- User-supplied knowledge (no course source) is exceptional and must be approved as such in the plan. Record it as `Maintainer/<YYYY-MM-DD> § <who supplied it: one-line provenance>` in `sources` and `## Sources`; the date must match a `## Changelog` entry that names the page. The validator enforces the pairing.
+- Default: every sentence traces to a source in the form `_sources.md` defines. Merging across sources is fine; adding is not. A new claim needs a source already listed in `_sources.md`, or that file and `validate.ps1`'s `$sources` list are extended in the same change.
+- User-supplied knowledge (no external source) is exceptional and must be approved as such in the plan. Record it as `Maintainer/<YYYY-MM-DD> § <who supplied it: one-line provenance>` in `sources` and `## Sources`; the date must match a `## Changelog` entry that names the page. The validator enforces the pairing.
 - Deprecation: no stubs, no redirect files. Rename/remove = rewrite every reference (grep the whole wiki for the id, including `_glossary.md` and `_overview.md`), regenerate the catalog, and record `renamed old → new` / `removed id (reason)` in the changelog — the changelog is the redirect table.
 
 ## 6. Change plan (present before any write; wait for explicit approval)
@@ -67,7 +67,7 @@ Page ids affected: <ids>        Frontmatter deltas: <field: old → new, per pag
 Domain _index.md: <rows / Decisions-in-order line / This stage text>
 _playbook.md: <line to add/move/remove>     _overview.md / _index.md: <count or structure text>
 Glossary: | term | definition | `see-id` |  (+ aliases)      Schema/validator change: <none | describe — flag>
-Sources: <Course name § heading> per new claim (or Maintainer/<date> § … — flag)   New course added to _sources.md + $courses: <none | name>
+Sources: <source § heading> per new claim (or Maintainer/<date> § … — flag)   New source added to _sources.md + $sources: <none | name>
 
 Catalog regen: yes/no           Changelog line: <draft>
 ```

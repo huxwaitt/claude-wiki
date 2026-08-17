@@ -32,7 +32,7 @@ Consequences for writing:
 | Answer first | H1, then `**Bottom line:**` stating the recommendation/definition in ≤2 sentences | Build up to a conclusion |
 | Self-contained | Restate the one sentence of context the page needs | "As above", "earlier", "in this module", "next lesson", unexplained pronouns |
 | Conditional guidance | `If <observable condition> → <action>. Because <reason>.` — one per bullet | "It depends", "consider", "may want to" |
-| Imperative, reader-facing | "Choose…", "Place the check…", "Log…" | "You will learn…", "Let's…", "In this course…" |
+| Imperative, reader-facing | "Choose…", "Place the check…", "Log…" | "You will learn…", "Let's…", "In this section…" |
 | Compressed | Bullets; tables for comparisons; ≤25 words per bullet | Paragraph prose for lists; throat-clearing ("It is important to note") |
 | Canonical terms | The names in §6 exactly | Synonyms, coined terms, abbreviations not in §6 |
 | Cross-reference by id | `→ \`domain.page-slug\`` | "See the page on X", titles, relative paths |

@@ -9,7 +9,8 @@ them out of hundreds and answer from those alone, for 6-9k tokens.
 
 ## Contents
 
-No domain folders exist yet, and `_catalog.yaml` is absent until the validator first generates it.
+No domain folders exist yet. `_catalog.yaml` is present but empty; the validator regenerates it on every
+`-WriteCatalog` run.
 
 | File | Use |
 |---|---|
@@ -83,7 +84,6 @@ carrying the wiki elsewhere.
 
 ## Where this came from
 
-The format, the contract and the tooling come from the Advisory-Wiki at
-`C:\notes\Anthropic-Courses\Advisory-Wiki`, stripped of all content on 2026-08-17. A populated example of
-the same format is at `C:\anthropic-wiki` — read it when you want to see what a filled-in domain index,
-page or glossary actually looks like.
+The format, the contract and the tooling were lifted from a populated wiki of the same design and
+stripped of its content on 2026-08-17. What remains is the reusable part: the page contract, the
+validator, the maintenance procedure and the file skeletons. Nothing of the original subject is left.

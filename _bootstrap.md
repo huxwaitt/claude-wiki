@@ -65,11 +65,11 @@ Work through `_sources.md`, which lists what to decide. Then:
 
 - Put the form in `_schema.md` §3, in the `sources:` comment.
 - Put the catalogue of accepted source names in `_sources.md`.
-- Mirror that catalogue into `$courses` in `_tools\validate.ps1`.
+- Mirror that catalogue into `$sources` in `_tools\validate.ps1`.
 
-The variable is named `$courses` because it was inherited from a wiki built on courses; rename it if the
-name misleads for your subject. What matters is that it holds every accepted source name and nothing
-else, so a typo in a citation is caught rather than silently accepted.
+`$sources` holds every accepted source name and nothing else, so a typo in a citation is caught rather
+than silently accepted. Rename it if a different word fits your subject better; if you do, change every
+use in `validate.ps1` and the references to it in `_maintenance.md` and `_sources.md`.
 
 ## 4. topics, stage, depth
 
@@ -111,7 +111,7 @@ checks the counts in `_overview.md` and `_index.md` against the live files.
 Before calling the wiki usable:
 
 - [ ] `_schema.md` §5 and §6 contain no `TODO`.
-- [ ] `_sources.md` lists every accepted source; `$courses` in the validator matches it exactly.
+- [ ] `_sources.md` lists every accepted source; `$sources` in the validator matches it exactly.
 - [ ] `$stages`, `$topics`, `$depthPattern` are filled, or the field is deliberately deleted from the contract.
 - [ ] Every domain has an `_index.md` per `_schema.md` §7 and at least one page.
 - [ ] `_tools\validate.ps1 -WriteCatalog` reports `structure issues: 0`, `files with issues: 0`, and no
