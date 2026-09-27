@@ -92,9 +92,15 @@ The repository is also a single-plugin marketplace, so the skills install and up
 /plugin install claude-wiki@claude-wiki
 ```
 
-`/wiki-navigate` and `/wiki-maintain` are then available in every session, and `/plugin update` picks up
-later changes. Prefer this over copying folders: a hand-copied skill silently drifts from this repository,
-and nothing tells you when it has.
+Both skills are then available in every session, and `/plugin update` picks up later changes. Claude Code
+namespaces a plugin's components under the plugin name, so invoked explicitly they are
+`claude-wiki:wiki-navigate` and `claude-wiki:wiki-maintain`. The natural-language triggers are unaffected
+— "consult the wiki", "update the wiki" and the rest route the same way, which is how they are normally
+reached.
+
+Prefer the plugin over copying folders: a hand-copied skill silently drifts from this repository, and
+nothing tells you when it has. If you want the bare `/wiki-navigate` and `/wiki-maintain` spellings,
+install by hand instead.
 
 To install by hand instead, copy the two folders in `skills/` into `~/.claude/skills/`
 (`%USERPROFILE%\.claude\skills\` on Windows).
