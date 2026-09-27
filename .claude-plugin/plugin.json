@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "claude-wiki",
+  "displayName": "Claude Wiki",
+  "description": "A retrieval wiki contract plus the two skills that drive it: /wiki-navigate for read-only lookup, /wiki-maintain for structure-safe edits. Deployable to any subject or project.",
+  "version": "1.0.0",
+  "author": { "name": "huxwaitt", "url": "https://github.com/huxwaitt" },
+  "homepage": "https://github.com/huxwaitt/claude-wiki#readme",
+  "repository": "https://github.com/huxwaitt/claude-wiki",
+  "license": "MIT",
+  "keywords": ["wiki", "knowledge-base", "retrieval", "documentation", "skills"]
+}

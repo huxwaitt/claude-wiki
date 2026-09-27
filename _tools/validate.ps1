@@ -1,6 +1,15 @@
 param([switch]$WriteCatalog, [string]$Root)
-# Wiki root: -Root wins, else the folder holding this _tools\ directory. No hardcoded path.
+# Wiki root: -Root wins, else the folder holding this _tools/ directory. No hardcoded path.
 $root = if ($Root) { (Resolve-Path $Root).Path } else { (Resolve-Path (Join-Path $PSScriptRoot '..')).Path }
+# Top-level file paths, built with Join-Path so the script runs on Windows, macOS and Linux.
+$pIndex    = Join-Path $root '_index.md'
+$pPlaybook = Join-Path $root '_playbook.md'
+$pMaint    = Join-Path $root '_maintenance.md'
+$pOverview = Join-Path $root '_overview.md'
+$pGlossary = Join-Path $root '_glossary.md'
+$pCatalog  = Join-Path $root '_catalog.yaml'
+# Report a page path relative to the wiki root, with / separators on every platform.
+function Rel([string]$f) { ((($f -replace [regex]::Escape($root), '') -replace '^[\\/]+', '') -replace '\\', '/') }
 $types = 'concept','decision','pattern','pitfall','checklist','procedure'
 # ---- Subject vocabularies. All four start empty. ----
 # Fill each one together with its counterpart in _schema.md §5/§6 and _sources.md; `_bootstrap.md`
@@ -129,36 +138,36 @@ foreach ($p in $pages) {
 # ---- structural checks (wiki-level; reported separately from per-page issues) ----
 $struct = @()
 $idRx = "(?:$slugAlt)\.[\w-]+"
-$rootIdx = Get-Content "$root\_index.md" -Raw
-$playbook = Get-Content "$root\_playbook.md" -Raw
+$rootIdx = Get-Content $pIndex -Raw
+$playbook = Get-Content $pPlaybook -Raw
 foreach ($d in $domainDirs) {
-  if (-not (Test-Path "$($d.Dir.FullName)\_index.md")) { $struct += "$($d.Name): missing _index.md"; continue }
+  if (-not (Test-Path (Join-Path $d.Dir.FullName '_index.md'))) { $struct += "$($d.Name): missing _index.md"; continue }
   if ($rootIdx -notmatch "``$([regex]::Escape($d.Name))``") { $struct += "_index.md domain table lacks row for $($d.Name)" }
-  $dIdx = Get-Content "$($d.Dir.FullName)\_index.md" -Raw
+  $dIdx = Get-Content (Join-Path $d.Dir.FullName '_index.md') -Raw
   $dPages = @($pages | Where-Object { $_.domain -eq $d.Name -and $_.id })
   foreach ($p in $dPages) {
-    if ($dIdx -notmatch "\|\s*``?$([regex]::Escape($p.id))``?\s*\|") { $struct += "$($d.Name)\_index.md: no table row for $($p.id)" }
+    if ($dIdx -notmatch "\|\s*``?$([regex]::Escape($p.id))``?\s*\|") { $struct += "$($d.Name)/_index.md: no table row for $($p.id)" }
     # _playbook.md is the PROCESS spine: every non-pitfall page of a process domain appears once; reference (container) domains are reached from the router and `related`, not listed page by page.
     if (-not $d.IsRef -and $p.fm.type -ne 'pitfall' -and $playbook -notmatch "``$([regex]::Escape($p.id))``") { $struct += "_playbook.md: missing $($p.id)" }
   }
-  foreach ($r in ([regex]::Matches($dIdx, "``?($idRx)``?") | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)) { if ($ids -notcontains $r) { $struct += "$($d.Name)\_index.md: dangling id $r" } }
+  foreach ($r in ([regex]::Matches($dIdx, "``?($idRx)``?") | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)) { if ($ids -notcontains $r) { $struct += "$($d.Name)/_index.md: dangling id $r" } }
 }
 foreach ($c in $containers) {
-  if (-not (Test-Path "$($c.Dir.FullName)\_index.md")) { $struct += "$($c.Name): container missing _index.md"; continue }
-  $cIdx = Get-Content "$($c.Dir.FullName)\_index.md" -Raw
-  foreach ($k in $c.Children) { if ($cIdx -notmatch "``$([regex]::Escape($k))``") { $struct += "$($c.Name)\_index.md: does not list child domain $k" } }
+  if (-not (Test-Path (Join-Path $c.Dir.FullName '_index.md'))) { $struct += "$($c.Name): container missing _index.md"; continue }
+  $cIdx = Get-Content (Join-Path $c.Dir.FullName '_index.md') -Raw
+  foreach ($k in $c.Children) { if ($cIdx -notmatch "``$([regex]::Escape($k))``") { $struct += "$($c.Name)/_index.md: does not list child domain $k" } }
   if ($rootIdx -notmatch "``$([regex]::Escape($c.Name))``") { $struct += "_index.md lacks a mention of container $($c.Name)" }
 }
 foreach ($m in [regex]::Matches($rootIdx, '(?m)^\|\s*`(\d\d-[\w-]+(?:/[\w-]+)?)`\s*\|')) { if ($domainDirs.Name -notcontains $m.Groups[1].Value -and $containers.Name -notcontains $m.Groups[1].Value) { $struct += "_index.md domain table row for non-existent folder $($m.Groups[1].Value)" } }
 foreach ($r in ([regex]::Matches($playbook, "``($idRx)``") | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)) { if ($ids -notcontains $r) { $struct += "_playbook.md: dangling id $r" } }
-$changelog = if (Test-Path "$root\_maintenance.md") { Get-Content "$root\_maintenance.md" -Raw } else { $struct += "_maintenance.md missing"; '' }
+$changelog = if (Test-Path $pMaint) { Get-Content $pMaint -Raw } else { $struct += "_maintenance.md missing"; '' }
 # count drift: where a top-level file states a count, it must equal the live count (phrases absent → no check)
-$overview = if (Test-Path "$root\_overview.md") { Get-Content "$root\_overview.md" -Raw } else { '' }
+$overview = if (Test-Path $pOverview) { Get-Content $pOverview -Raw } else { '' }
 $nPages = $pages.Count; $nPit = @($pages | Where-Object { $_.fm -and $_.fm.type -eq 'pitfall' }).Count; $nNon = $nPages - $nPit
 $gAliasCount = 0; $inA = $false
-foreach ($l in (Get-Content "$root\_glossary.md")) { if ($l -match '^## Aliases') { $inA = $true; continue }; if ($inA -and $l -match '^\|' -and $l -notmatch '^\|\s*(Alias|-+)\s*\|') { $gAliasCount++ } }
+foreach ($l in (Get-Content $pGlossary)) { if ($l -match '^## Aliases') { $inA = $true; continue }; if ($inA -and $l -match '^\|' -and $l -notmatch '^\|\s*(Alias|-+)\s*\|') { $gAliasCount++ } }
 $gTermCount = 0; $inA = $false
-foreach ($l in (Get-Content "$root\_glossary.md")) { if ($l -match '^## Aliases') { $inA = $true }; if (-not $inA -and $l -match '^\|' -and $l -notmatch '^\|\s*(Term|-+)\s*\|') { $gTermCount++ } }
+foreach ($l in (Get-Content $pGlossary)) { if ($l -match '^## Aliases') { $inA = $true }; if (-not $inA -and $l -match '^\|' -and $l -notmatch '^\|\s*(Term|-+)\s*\|') { $gTermCount++ } }
 $countChecks = @(
   @{ f='_index.md';    t=$rootIdx;  rx='(\d+) pages · (\d+) domains';                 want=@($nPages, $domainDirs.Count) },
   @{ f='_index.md';    t=$rootIdx;  rx='\((\d+) terms, (\d+) aliases\)';              want=@($gTermCount, $gAliasCount) },
@@ -197,7 +206,7 @@ foreach ($sec in [regex]::Matches($overview, '(?ms)^### (\d\d) [^\r\n]*\r?\n(.*?
 foreach ($d in $domainDirs) { if ($overview -and $overview -notmatch "(?m)^### $($d.NN) ") { $struct += "_overview.md: no '### $($d.NN) …' section for $($d.Name)" } }
 # glossary: See ids resolve (or <slug>.* domain wildcard); aliases resolve to a term
 $gTerms = @(); $inAlias = $false
-foreach ($l in (Get-Content "$root\_glossary.md")) {
+foreach ($l in (Get-Content $pGlossary)) {
   if ($l -match '^## Aliases') { $inAlias = $true; continue }
   if ($l -notmatch '^\|') { continue }
   $cells = @(($l.Trim() -replace '^\||\|$','') -split '\|' | ForEach-Object { $_.Trim() })
@@ -214,7 +223,7 @@ foreach ($l in (Get-Content "$root\_glossary.md")) {
   }
 }
 $inAlias = $false
-foreach ($l in (Get-Content "$root\_glossary.md")) {
+foreach ($l in (Get-Content $pGlossary)) {
   if ($l -match '^## Aliases') { $inAlias = $true; continue }
   if (-not $inAlias -or $l -notmatch '^\|') { continue }
   $cells = @(($l.Trim() -replace '^\||\|$','') -split '\|' | ForEach-Object { $_.Trim() })
@@ -238,7 +247,7 @@ foreach ($p in ($pages | Where-Object fm)) {
 "total body words: " + (($pages | Measure-Object words -Sum).Sum)
 $bad = $pages | Where-Object { $_.issues.Count -gt 0 }
 "files with issues: $($bad.Count)"
-foreach ($p in $bad) { "-- " + ($p.file -replace [regex]::Escape($root),''); $p.issues | ForEach-Object { "     $_" } }
+foreach ($p in $bad) { "-- " + (Rel $p.file); $p.issues | ForEach-Object { "     $_" } }
 # ---- catalog: always regenerate in memory; write on -WriteCatalog, otherwise report staleness ----
 if ($true) {
   $sb = New-Object System.Text.StringBuilder
@@ -258,15 +267,15 @@ if ($true) {
     if (@($p.fm.not_for).Count) { [void]$sb.AppendLine("    not_for:"); foreach ($a in @($p.fm.not_for)) { [void]$sb.AppendLine("      - $(& $q $a)") } }
     [void]$sb.AppendLine("    sources:"); foreach ($a in @($p.fm.sources)) { [void]$sb.AppendLine("      - $(& $q $a)") }
     if (@($p.fm.related).Count) { [void]$sb.AppendLine("    related: [$(@($p.fm.related) -join ', ')]") }
-    [void]$sb.AppendLine("    file: $($p.file -replace [regex]::Escape($root + '\'),'' -replace '\\','/')")
+    [void]$sb.AppendLine("    file: $(Rel $p.file)")
     [void]$sb.AppendLine("    words: $($p.words)")
   }
   $catText = $sb.ToString()
   if ($WriteCatalog) {
-    [System.IO.File]::WriteAllText("$root\_catalog.yaml", $catText, (New-Object System.Text.UTF8Encoding $false))
-    "catalog written: $root\_catalog.yaml"
+    [System.IO.File]::WriteAllText($pCatalog, $catText, (New-Object System.Text.UTF8Encoding $false))
+    "catalog written: $pCatalog"
   } else {
-    $existing = if (Test-Path "$root\_catalog.yaml") { Get-Content "$root\_catalog.yaml" -Raw } else { '' }
+    $existing = if (Test-Path $pCatalog) { Get-Content $pCatalog -Raw } else { '' }
     if (($existing -replace "`r`n","`n") -ne ($catText -replace "`r`n","`n")) { $struct += "_catalog.yaml stale — run validate.ps1 -WriteCatalog" }
   }
 }

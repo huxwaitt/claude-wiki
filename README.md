@@ -22,8 +22,9 @@ No domain folders exist yet. `_catalog.yaml` is present but empty; the validator
 | `_overview.md` | The subject end to end: stages, artifacts, exit criteria, how the wiki is organized. Skeleton, written last. |
 | `_glossary.md` | Term, definition, and the page id where the term is treated. Headers and rules only, no rows. |
 | `_maintenance.md` | How to change a populated wiki: file roles, operation touch-lists, completion checklist, changelog. Complete; the changelog is empty. |
-| `_tools\validate.ps1` | Checks every page and the structure against `_schema.md`. `-WriteCatalog` writes `_catalog.yaml`. Complete, with the subject vocabularies empty. |
+| `_tools/validate.ps1` | Checks every page and the structure against `_schema.md`. `-WriteCatalog` writes `_catalog.yaml`. Complete, with the subject vocabularies empty. |
 | `skills\` | The two skills that drive a wiki in this format. See *Skills* below. |
+| `.claude-plugin\` | `plugin.json` and `marketplace.json`, which make this repository installable as a Claude Code plugin. Not part of the wiki contract; irrelevant once cloned as a shell. |
 
 ## The contract in brief
 
@@ -58,9 +59,9 @@ for a checklist. The validator enforces them.
 3. Decide what a citation looks like and fill in `_sources.md`. Do this before writing pages;
    retrofitting citations across a populated wiki is expensive.
 4. Fill the `topics`, `stage` and `depth` vocabularies in `_schema.md` §5, and the canonical names in §6.
-   Each has a matching list at the top of `_tools\validate.ps1`; change them together.
+   Each has a matching list at the top of `_tools/validate.ps1`; change them together.
 5. Write pages with `/wiki-maintain`, which plans each change and waits for your approval before writing.
-6. Write `_overview.md` and `_playbook.md` last, then run `_tools\validate.ps1 -WriteCatalog` and require
+6. Write `_overview.md` and `_playbook.md` last, then run `_tools/validate.ps1 -WriteCatalog` and require
    `structure issues: 0` with no vocabularies reported as skipped.
 
 The validator's subject vocabularies all start empty, and **an empty list means that check does not
@@ -70,7 +71,7 @@ unfilled vocabulary quietly stops protecting you. Fill them early.
 
 ## Skills
 
-Two skills drive a wiki in this format, copied into `skills\` here so the folder travels intact:
+Two skills drive a wiki in this format, kept in `skills/` here so the folder travels intact:
 
 - **`wiki-navigate`** — read-only lookup. Route, select, read, answer.
 - **`wiki-maintain`** — changes. Plan, confirm, write, verify. It reads `_bootstrap.md` when the request
@@ -78,9 +79,42 @@ Two skills drive a wiki in this format, copied into `skills\` here so the folder
 
 Neither hardcodes a path. Each locates a wiki at run time by looking for a folder containing both
 `_index.md` and `_schema.md` — the working directory first, then its children, then its ancestors — and
-asks you when the answer is ambiguous. To use them as slash commands, copy the two folders in `skills\`
-into `%USERPROFILE%\.claude\skills\`. They are already installed there, so the copies here are for
-carrying the wiki elsewhere.
+asks you when the answer is ambiguous. So one installation of the skills drives every wiki you own.
+
+## Install
+
+### The skills, as a plugin (recommended)
+
+The repository is also a single-plugin marketplace, so the skills install and update in place:
+
+```
+/plugin marketplace add huxwaitt/claude-wiki
+/plugin install claude-wiki@claude-wiki
+```
+
+`/wiki-navigate` and `/wiki-maintain` are then available in every session, and `/plugin update` picks up
+later changes. Prefer this over copying folders: a hand-copied skill silently drifts from this repository,
+and nothing tells you when it has.
+
+To install by hand instead, copy the two folders in `skills/` into `~/.claude/skills/`
+(`%USERPROFILE%\.claude\skills\` on Windows).
+
+### The wiki shell, for a new subject
+
+Use the green **Use this template** button, or clone:
+
+```
+git clone https://github.com/huxwaitt/claude-wiki.git <your-wiki>
+cd <your-wiki> && rm -rf .git && git init
+```
+
+Then follow `_bootstrap.md`. Installing the plugin does not give you a wiki shell, and cloning the shell
+does not give you the skills — a full setup is both, once each.
+
+### Requirements
+
+PowerShell 7 (`pwsh`) for `_tools/validate.ps1`. The validator builds every path with `Join-Path` and
+resolves its own root, so it runs on Windows, macOS and Linux, from any working directory.
 
 ## Where this came from
 
