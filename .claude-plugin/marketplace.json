@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "claude-wiki",
+  "description": "The retrieval-wiki contract and the two skills that drive it.",
+  "owner": { "name": "huxwaitt", "url": "https://github.com/huxwaitt" },
+  "plugins": [
+    {
+      "name": "claude-wiki",
+      "source": ".",
+      "category": "documentation",
+      "tags": ["wiki", "knowledge-base", "retrieval"]
+    }
+  ]
+}
