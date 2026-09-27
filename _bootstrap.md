@@ -2,7 +2,7 @@
 
 `_maintenance.md` covers changing a wiki that already has content. This file covers the part before that:
 turning an empty shell into a wiki about something. Delete it once the wiki is populated and the TODOs in
-`_schema.md` §5, `_schema.md` §6, `_sources.md` and `_tools\validate.ps1` are gone.
+`_schema.md` §5, `_schema.md` §6, `_sources.md` and `_tools/validate.ps1` are gone.
 
 Read `_schema.md` first. It is the contract; nothing here overrides it.
 
@@ -51,7 +51,7 @@ how-to for one specific component?" → reference; otherwise spine* — and make
 spine pages point into reference pages, never the reverse. Without that rule, pages land in both series
 and routing degrades as the wiki grows.
 
-One container level is allowed for a reference series: a `NN-container\<leaf>\` where each leaf is itself
+One container level is allowed for a reference series: a `NN-container/<leaf>/` where each leaf is itself
 a domain with its own `_index.md`. No deeper nesting. The container's `_index.md` is a router table only.
 
 Write every domain into the `## Domains` table in `_index.md` as you create it, and create each domain's
@@ -65,7 +65,7 @@ Work through `_sources.md`, which lists what to decide. Then:
 
 - Put the form in `_schema.md` §3, in the `sources:` comment.
 - Put the catalogue of accepted source names in `_sources.md`.
-- Mirror that catalogue into `$sources` in `_tools\validate.ps1`.
+- Mirror that catalogue into `$sources` in `_tools/validate.ps1`.
 
 `$sources` holds every accepted source name and nothing else, so a typo in a citation is caught rather
 than silently accepted. Rename it if a different word fits your subject better; if you do, change every
@@ -73,7 +73,7 @@ use in `validate.ps1` and the references to it in `_maintenance.md` and `_source
 
 ## 4. topics, stage, depth
 
-All three live in `_schema.md` §5 and, in the same form, at the top of `_tools\validate.ps1`. **While a
+All three live in `_schema.md` §5 and, in the same form, at the top of `_tools/validate.ps1`. **While a
 list is empty the validator skips that check and says so at the end of its run.** That means an
 unpopulated wiki validates cleanly — and also that an unfilled vocabulary silently stops protecting you.
 Fill them early.
@@ -114,7 +114,7 @@ Before calling the wiki usable:
 - [ ] `_sources.md` lists every accepted source; `$sources` in the validator matches it exactly.
 - [ ] `$stages`, `$topics`, `$depthPattern` are filled, or the field is deliberately deleted from the contract.
 - [ ] Every domain has an `_index.md` per `_schema.md` §7 and at least one page.
-- [ ] `_tools\validate.ps1 -WriteCatalog` reports `structure issues: 0`, `files with issues: 0`, and no
+- [ ] `_tools/validate.ps1 -WriteCatalog` reports `structure issues: 0`, `files with issues: 0`, and no
       skipped vocabularies.
 - [ ] `_index.md` domain table has a real *Not here* for every row.
 - [ ] `_overview.md` and `_playbook.md` written, counts correct.

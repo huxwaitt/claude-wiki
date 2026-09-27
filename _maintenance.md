@@ -11,11 +11,11 @@ How to change this wiki without breaking it. Structural only: it names file role
 | `_playbook.md` | Ordered decision spine; every non-pitfall page of the sequenced domains appears once, backticked. If the wiki has a reference series, its pages are not listed page by page — each stage line carries a "Reference:" pointer to the relevant leaf. | authored |
 | `_glossary.md` | `\| Term \| Definition \| See \|` table, then `## Aliases` `\| Alias \| Canonical \|`. See = page id in backticks, or `<slug>.*`. | authored |
 | `_schema.md` | The page contract (§2 voice · §3 frontmatter · §4 templates · §5 vocabularies · §6 canonical names · §7 domain index · §8 exclusions · §9 generated files). Change only when the contract changes. | authored |
-| `_catalog.yaml` | All frontmatter, one file. Grep target. | **generated** by `_tools\validate.ps1 -WriteCatalog` |
+| `_catalog.yaml` | All frontmatter, one file. Grep target. | **generated** by `_tools/validate.ps1 -WriteCatalog` |
 | `_maintenance.md` | This file + `## Changelog`. | authored |
-| `_tools\validate.ps1` | Enforces `_schema.md` per page, wiki structure, source form, count drift, catalog freshness. Vocabulary lists at its top mirror §5; `$sources` mirrors `_sources.md`. Resolves its own root from the script location, or `-Root`. | authored |
-| `NN-slug\` | Domain folder. `NN` two digits, unique, ordered; `slug` lowercase-hyphenated. Contains `_index.md` (§7 format) + pages. Flat within a domain. **One container level is allowed for a reference series**: a `NN-slug\` folder that holds only leaf folders (`slug\`, unnumbered) and its own 4-row router `_index.md`. Leaf pages carry `domain: NN-container/leaf` and ids `leaf.<page>`. No nesting below a leaf. | authored |
-| `NN-slug\<page>.md` · `pitfall-<page>.md` | One atomic page. `id: <slug>.<filename-without-.md>` — id and filename are the same fact. | authored |
+| `_tools/validate.ps1` | Enforces `_schema.md` per page, wiki structure, source form, count drift, catalog freshness. Vocabulary lists at its top mirror §5; `$sources` mirrors `_sources.md`. Resolves its own root from the script location, or `-Root`. | authored |
+| `NN-slug/` | Domain folder. `NN` two digits, unique, ordered; `slug` lowercase-hyphenated. Contains `_index.md` (§7 format) + pages. Flat within a domain. **One container level is allowed for a reference series**: a `NN-slug/` folder that holds only leaf folders (`slug/`, unnumbered) and its own 4-row router `_index.md`. Leaf pages carry `domain: NN-container/leaf` and ids `leaf.<page>`. No nesting below a leaf. | authored |
+| `NN-slug/<page>.md` · `pitfall-<page>.md` | One atomic page. `id: <slug>.<filename-without-.md>` — id and filename are the same fact. | authored |
 | `_sources.md` | The source catalogue: every source this wiki may cite, how to reach it, and the citation form. Accepted names: the `$sources` list in `validate.ps1`, which must be kept in step with this file. | authored |
 | `_bootstrap.md` | How to stand an empty wiki up: domains, vocabularies, source form, the gate. Present only until the wiki is populated, then deleted. | authored |
 
@@ -42,15 +42,15 @@ Invariants: frontmatter is the routing surface (routing decisions are made from 
 | **Add pitfall** | `pitfall-<slug>.md` · domain `_index.md` Pitfalls row · `## Pitfalls` bullet on the preventing decision/pattern page · counts · catalog regen | glossary if the story names a term |
 | **Split / merge pages** | new page(s) as *Add page*; retired id(s) as *Rename/deprecate* | playbook and index rows reflect the new set exactly once |
 | **Rename / deprecate page** | rename file + `id` · grep whole wiki for the old id and rewrite every hit (frontmatter `related`/`not_for`, bodies, domain `_index.md`, `_playbook.md`, `_glossary.md` See, `_overview.md`) · changelog line `renamed a → b` or `removed a (reason)` · counts · catalog regen | no stub file is left behind (§5) |
-| **Add domain folder** | `NN-slug\` + `_index.md` per §7 · row in `_index.md` domain table (Route here when / Not here) · `### NN <Title>` section in `_overview.md` · `_playbook.md` placement · `_schema.md` §5 domain list (flag: contract change) · counts · catalog regen | at least one page and a stage checklist before publishing. A new **leaf of a reference series** goes under that series' container folder (row in the container `_index.md` and in the root reference table; counted line in the container's `_overview.md` section; no playbook placement; enough pages to justify a leaf; no stage checklist required) |
+| **Add domain folder** | `NN-slug/` + `_index.md` per §7 · row in `_index.md` domain table (Route here when / Not here) · `### NN <Title>` section in `_overview.md` · `_playbook.md` placement · `_schema.md` §5 domain list (flag: contract change) · counts · catalog regen | at least one page and a stage checklist before publishing. A new **leaf of a reference series** goes under that series' container folder (row in the container `_index.md` and in the root reference table; counted line in the container's `_overview.md` section; no playbook placement; enough pages to justify a leaf; no stage checklist required) |
 | **Add / modify glossary term** | `_glossary.md` row (§4 rule) | alias rows for synonyms; §6 if it is a canonical product name |
 | **Change a top-level file** | the file · anything that quotes it (`_index.md` file table, `_overview.md` organisation text) | if `_schema.md` §4/§5 changes → mirror the list/template in `validate.ps1`; **flag loudly**: contract change |
-| **Re-validate only** | nothing · run `_tools\validate.ps1 -WriteCatalog` · report | changelog line only if the catalog changed |
+| **Re-validate only** | nothing · run `_tools/validate.ps1 -WriteCatalog` · report | changelog line only if the catalog changed |
 | **Bulk import** (a new body of source material, or many pages at once) | build plan first: source-section → domain/page-id map, planned ids, pitfall assignments (the initial-build pattern) · confirm the plan · fan out **one agent per affected domain**, each given `_schema.md` + the plan + this file's touch-lists · then one *Add page*/*Add domain* touch-list pass over the whole result · counts · catalog regen | new source name → `_sources.md` row + `validate.ps1` `$sources` (mirror; flag) · new canonical names → `_schema.md` §6 · glossary sweep for new terms · run the checklist once at the end, not per agent |
 
 ## 4. Glossary rule
 
-Any technical term a change introduces or renames goes into `_glossary.md` in the stored form: `| <term> | <source's definition, ≤25 words> | `\`<page id>\`` |`, inserted in alphabetical position (sort key: lower-case, ignore a leading "the" and punctuation). Synonyms and abbreviations become `## Aliases` rows pointing at the canonical term. A new canonical product/feature name is also added to `_schema.md` §6 (contract change — flag it). Removing a page that a term's See points at → repoint or delete the row.
+Any technical term a change introduces or renames goes into `_glossary.md` in the stored form: `| <term> | <source's definition, ≤25 words> | `/`<page id>/`` |`, inserted in alphabetical position (sort key: lower-case, ignore a leading "the" and punctuation). Synonyms and abbreviations become `## Aliases` rows pointing at the canonical term. A new canonical product/feature name is also added to `_schema.md` §6 (contract change — flag it). Removing a page that a term's See points at → repoint or delete the row.
 
 ## 5. Sources, provenance and deprecation
 
@@ -85,7 +85,7 @@ Nothing is written until the user approves this plan. If execution reveals a nee
 - [ ] `_schema.md` touched only if the contract changed — said so in the report; `validate.ps1` lists mirrored.
 - [ ] Old ids: grep of the whole wiki returns zero hits for a renamed/removed id.
 - [ ] No invented content: each new sentence maps to a listed source, or the source is `Maintainer/<date> § …` and was approved.
-- [ ] `_tools\validate.ps1 -WriteCatalog` run last; per-page issues not larger than before the change and none on files touched (or each remaining one accepted with reason in the report); `structure issues: 0`.
+- [ ] `_tools/validate.ps1 -WriteCatalog` run last; per-page issues not larger than before the change and none on files touched (or each remaining one accepted with reason in the report); `structure issues: 0`.
 - [ ] `## Changelog` entry appended (§8). Report: files changed, ids affected, validator tail, accepted issues.
 
 ## 8. Changelog

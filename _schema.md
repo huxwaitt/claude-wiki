@@ -5,7 +5,7 @@ agent) follow it exactly. Readers (the navigate skill) can rely on it.
 
 Sections §1–§4 and §7–§9 are the format and hold for any subject. **§5 and §6 are subject-specific and
 start empty.** Fill them before writing page one; `_bootstrap.md` explains how to derive them, and
-`_tools\validate.ps1` holds the same lists and must be changed with them.
+`_tools/validate.ps1` holds the same lists and must be changed with them.
 
 ## 1. How this wiki is read at runtime — write for this
 
@@ -35,7 +35,7 @@ Consequences for writing:
 | Imperative, reader-facing | "Choose…", "Place the check…", "Log…" | "You will learn…", "Let's…", "In this section…" |
 | Compressed | Bullets; tables for comparisons; ≤25 words per bullet | Paragraph prose for lists; throat-clearing ("It is important to note") |
 | Canonical terms | The names in §6 exactly | Synonyms, coined terms, abbreviations not in §6 |
-| Cross-reference by id | `→ \`domain.page-slug\`` | "See the page on X", titles, relative paths |
+| Cross-reference by id | `→ /`domain.page-slug/`` | "See the page on X", titles, relative paths |
 | Faithful to source | Numbers, thresholds, examples exactly as in the source | Invented facts, external knowledge, rounding, "typically" |
 | Silence over padding | Omit what the source does not say | Filling gaps with general knowledge |
 | Verbatim anchors | ≤2 blockquotes per page, ≤40 words each, exact, with inline source tag | Long quotes, paraphrase in quotes |
@@ -159,18 +159,18 @@ blockquote attribution in the body may use a shortened form; the full form still
 Length caps (body words, excluding frontmatter and the `## Sources` block): concept/decision/pattern/
 procedure 300–900 · pitfall ≤350 · checklist ≤400. A table-heavy page (≥15% of its body words inside
 tables) may exceed its cap by 10% — tables are the densest information on a page and are not cut to
-satisfy the cap. `_tools\validate.ps1` enforces exactly this rule.
+satisfy the cap. `_tools/validate.ps1` enforces exactly this rule.
 
 ## 5. Controlled vocabularies — TODO: define for this subject
 
-Nothing here is filled in. Every list below is empty, `_tools\validate.ps1` has the matching lists empty,
+Nothing here is filled in. Every list below is empty, `_tools/validate.ps1` has the matching lists empty,
 and while they are empty the validator does not check the corresponding field. Fill both together.
 `_bootstrap.md` covers how to derive each one.
 
 **Domains / slugs** — TODO. A domain is a folder `NN-slug`. List every domain here with its slug, in
 order. If the subject splits into a sequence plus a reference series, say which domains are which, and
 state the placement test that decides where a new page goes. One container level is allowed: a
-`NN-container\<leaf>\` whose leaves are themselves domains. No deeper nesting.
+`NN-container/<leaf>/` whose leaves are themselves domains. No deeper nesting.
 
 **stage** — TODO. The phases a reader moves through, if the subject has any. 1–2 per page. Delete this
 field from §3, `validate.ps1` and the templates if the subject has no meaningful phases.

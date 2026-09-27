@@ -3,7 +3,7 @@
 TODO. This file is built when the wiki is set up. Until it is filled in, no page can cite anything.
 
 Every page cites its sources twice: a `sources:` list in the frontmatter and a matching `## Sources`
-section in the body. Both use the same form, and `_tools\validate.ps1` enforces it.
+section in the body. Both use the same form, and `_tools/validate.ps1` enforces it.
 
 ## What to decide
 
@@ -25,7 +25,7 @@ section in the body. Both use the same form, and `_tools\validate.ps1` enforces 
 - The citation form, with a worked example.
 - The catalogue: every source that may be cited, with whatever locator a reader needs to reach it.
 - The rule for adding a source later, which is that this file and `$sources` in
-  `_tools\validate.ps1` change together. The validator rejects a citation naming anything not in that
+  `_tools/validate.ps1` change together. The validator rejects a citation naming anything not in that
   list, so an unlisted source cannot leak into a page unnoticed.
 
 ## Sources with no external origin

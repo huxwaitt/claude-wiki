@@ -41,8 +41,8 @@ a table without it sends every question to every domain.
 | `_schema.md` | Page contract and writing standard. Read when authoring or auditing pages. |
 | `_bootstrap.md` | How to stand this wiki up: domains, vocabularies, source form. Delete once filled in. |
 | `_maintenance.md` | How to change the wiki: file roles, operations, completion checklist, changelog. |
-| `_tools\validate.ps1` | Validates pages and structure against `_schema.md`; `-WriteCatalog` regenerates `_catalog.yaml`. |
-| `<domain>\_index.md` | Stage purpose/inputs/outputs/exit criteria · decisions in order · page table · pitfall table. |
+| `_tools/validate.ps1` | Validates pages and structure against `_schema.md`; `-WriteCatalog` regenerates `_catalog.yaml`. |
+| `<domain>/_index.md` | Stage purpose/inputs/outputs/exit criteria · decisions in order · page table · pitfall table. |
 
 ## Page types (what to expect when a page opens)
 

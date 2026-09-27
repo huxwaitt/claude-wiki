@@ -1,0 +1,6 @@
+# Deterministic line endings regardless of the cloner's core.autocrlf setting.
+* text=auto
+*.ps1 text
+*.md text
+*.json text
+*.yaml text

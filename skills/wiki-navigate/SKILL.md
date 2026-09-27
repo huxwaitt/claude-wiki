@@ -25,16 +25,16 @@ This skill hardcodes no path. A wiki is any folder holding both `_index.md` and 
 
 ## 1. Discover (every invocation)
 
-1. Read `<root>\_index.md` — the router. It lists the current domains, top-level files, and read
+1. Read `<root>/_index.md` — the router. It lists the current domains, top-level files, and read
    protocol. Trust it over this skill.
 2. Only if the router looks stale (names a folder that does not exist, or a `NN-*` folder is missing from
-   its table): list `<root>\NN-*` folders and read each `_index.md` `## This stage` block. Note the
+   its table): list `<root>/NN-*` folders and read each `_index.md` `## This stage` block. Note the
    mismatch for the answer (§5).
 
 Structural invariants (stable across wikis built to this contract):
 - Domain = folder `NN-slug`; each has `_index.md` (`## This stage` · `## Decisions in order` · `## Pages`
   table · `## Pitfalls` table) plus pages `<slug>.md` / `pitfall-<slug>.md`. One container level may
-  exist: `NN-container\<leaf>\`, each leaf a domain with its own `_index.md` (`## This surface` ·
+  exist: `NN-container/<leaf>/`, each leaf a domain with its own `_index.md` (`## This surface` ·
   `## Pages in order` · tables); the router names leaves as `NN-container/leaf` and links to them.
 - Page id = `<slug>.<filename-without-.md>` where slug is the page's own folder. Frontmatter carries
   `summary`, `depth`, `applies_when`, `not_for`, `sources`, `related`; body opens with `**Bottom line:**`.
@@ -47,7 +47,7 @@ Structural invariants (stable across wikis built to this contract):
 ## 2. Read protocol
 
 1. **Route** — pick ≤2 domains from the router's *Route here when* / *Not here* columns.
-2. **Select** — open each chosen `<domain>\_index.md`; pick ≤4 pages by `summary`, `applies_when`, and
+2. **Select** — open each chosen `<domain>/_index.md`; pick ≤4 pages by `summary`, `applies_when`, and
    `depth`. Use `not_for` to reroute.
 3. **Read** — load the pages. `**Bottom line:**` is the answer; the body is justification. Follow
    `related` only if a gap remains, ≤2 hops.

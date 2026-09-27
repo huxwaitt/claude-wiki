@@ -17,17 +17,17 @@ change is not approval of the change.**
 0. Resolve `<WIKI_ROOT>` the way `/wiki-navigate` §0 does: a path in the request wins; else a saved
    memory entry, verified; else search the working directory, its children, then its ancestors and their
    children, for a folder holding `_index.md` + `_schema.md`; several hits → ask; none → stop.
-1. Read `<WIKI_ROOT>\_maintenance.md` (procedure, touch-lists, checklist, changelog).
-2. Read `<WIKI_ROOT>\_schema.md` (voice, frontmatter, templates, vocabularies, canonical names, index
+1. Read `<WIKI_ROOT>/_maintenance.md` (procedure, touch-lists, checklist, changelog).
+2. Read `<WIKI_ROOT>/_schema.md` (voice, frontmatter, templates, vocabularies, canonical names, index
    format).
-3. **If `<WIKI_ROOT>\_bootstrap.md` exists, read it too** whenever the request touches domains, the
+3. **If `<WIKI_ROOT>/_bootstrap.md` exists, read it too** whenever the request touches domains, the
    controlled vocabularies (`topics`, `stage`, `depth`), canonical names, or the source form — and
    whenever `_schema.md` §5 or §6 still contains `TODO`, whatever the request. An unpopulated wiki is set
    up by following `_bootstrap.md`, not by improvising a schema.
-4. Discover structure at runtime: list `<WIKI_ROOT>\NN-*` folders and, for a container (a `NN-*` folder
+4. Discover structure at runtime: list `<WIKI_ROOT>/NN-*` folders and, for a container (a `NN-*` folder
    holding only leaf folders), its leaves; read the target domain's or leaf's `_index.md`; grep
    `_catalog.yaml` (never load it whole) for ids/terms the request mentions.
-5. Run `<WIKI_ROOT>\_tools\validate.ps1` once to capture the pre-change baseline (issue list, counts, and
+5. Run `<WIKI_ROOT>/_tools/validate.ps1` once to capture the pre-change baseline (issue list, counts, and
    any vocabularies it reports as not yet defined).
 
 ## 2. Classify
@@ -47,7 +47,7 @@ its steps as a separate confirm-then-write cycle rather than one bulk approval.
 ## 3. Confirm (blocking, absolute)
 Fill the change plan in `_maintenance.md` §6 — paths to create/modify/rename, page ids, frontmatter
 deltas, domain index rows and decisions-in-order line, playbook line, glossary rows in stored form
-(`| term | ≤25-word definition | \`see-id\` |`), overview/root count or structure text, schema/validator
+(`| term | ≤25-word definition | /`see-id/` |`), overview/root count or structure text, schema/validator
 changes (flag), sources per claim (flag `Maintainer/<date>`), any new source added to `_sources.md` and
 `$sources`, catalog regen, draft changelog line. Present it and stop. Proceed only on explicit approval
 given after seeing the plan. For any edit small enough that a plan feels excessive, show the exact
@@ -62,7 +62,7 @@ old id and rewrite every hit; no stubs.
 
 ## 5. Verify and report
 1. Walk `_maintenance.md` §7 item by item; fix until each is true.
-2. Run `<WIKI_ROOT>\_tools\validate.ps1 -WriteCatalog`. Required: `structure issues: 0`; per-page issues
+2. Run `<WIKI_ROOT>/_tools/validate.ps1 -WriteCatalog`. Required: `structure issues: 0`; per-page issues
    no larger than baseline and none on touched files — otherwise fix, or list each remaining one with the
    reason accepted. If the validator reports vocabularies not yet defined, repeat that in your report.
 3. Append the `## Changelog` line (§8) with the validator tail.
@@ -73,5 +73,5 @@ old id and rewrite every hit; no stubs.
 - Never edit `_catalog.yaml` by hand, or any source material the wiki cites.
 - Do not hardcode domain names, ids, or counts from memory — read them from the files each time.
 - `_schema.md` changes are contract changes: call them out in the plan and the report. A change to §5 or
-  §6 must be mirrored in `_tools\validate.ps1`, and a change to the source form must be mirrored in
+  §6 must be mirrored in `_tools/validate.ps1`, and a change to the source form must be mirrored in
   `_sources.md`.

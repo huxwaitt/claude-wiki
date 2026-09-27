@@ -23,8 +23,8 @@ No domain folders exist yet. `_catalog.yaml` is present but empty; the validator
 | `_glossary.md` | Term, definition, and the page id where the term is treated. Headers and rules only, no rows. |
 | `_maintenance.md` | How to change a populated wiki: file roles, operation touch-lists, completion checklist, changelog. Complete; the changelog is empty. |
 | `_tools/validate.ps1` | Checks every page and the structure against `_schema.md`. `-WriteCatalog` writes `_catalog.yaml`. Complete, with the subject vocabularies empty. |
-| `skills\` | The two skills that drive a wiki in this format. See *Skills* below. |
-| `.claude-plugin\` | `plugin.json` and `marketplace.json`, which make this repository installable as a Claude Code plugin. Not part of the wiki contract; irrelevant once cloned as a shell. |
+| `skills/` | The two skills that drive a wiki in this format. See *Skills* below. |
+| `.claude-plugin/` | `plugin.json` and `marketplace.json`, which make this repository installable as a Claude Code plugin. Not part of the wiki contract; irrelevant once cloned as a shell. |
 
 ## The contract in brief
 
@@ -32,7 +32,7 @@ No domain folders exist yet. `_catalog.yaml` is present but empty; the validator
 
 A **domain** is a folder named `NN-slug` holding an `_index.md` and its pages. Its index states the
 stage's purpose, inputs, outputs and exit criteria, lists its decisions in order, and carries generated
-tables of its pages and pitfalls. One level of containment is allowed: a `NN-container\<leaf>\` where each
+tables of its pages and pitfalls. One level of containment is allowed: a `NN-container/<leaf>/` where each
 leaf is itself a domain.
 
 A **page** is `<slug>.md`, or `pitfall-<slug>.md` for a named failure case. Its id is
